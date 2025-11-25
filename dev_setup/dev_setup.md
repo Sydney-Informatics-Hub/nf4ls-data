@@ -1,45 +1,6 @@
 
 # Developer Installation  
 
-## `mamba`  
-
-```bash
-wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
-bash Miniforge3-$(uname)-$(uname -m).sh
-# complete prompts with defaults
-
-export PATH="$HOME/miniforge3/bin:$PATH"
-source ~/.bashrc
-
-# confirm installation versions
-mamba --version
-```
-
-```console
-mamba 1.5.8
-conda 24.3.0
-```
-
-Install packages:  
-
-```bash
-mamba create -n day2
-mamba activate day2
-mamba install -c bioconda nextflow # process tools via docker containers
-mamba install -c conda-forge mkdocs mkdocs-material
-```
-
-```bash
-mamba list | grep -E "nextflow|mkdocs |mkdocs-material"
-```
-
-```console
-mkdocs                    1.6.0              pyhd8ed1ab_0    conda-forge
-mkdocs-material           9.5.31             pyhd8ed1ab_0    conda-forge
-mkdocs-material-extensions 1.3.1              pyhd8ed1ab_0    conda-forge
-nextflow                  24.04.4              hdfd78af_0    bioconda
-```
-
 ## Docker   
 
 Follows [ubuntu installation](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) and [linux post-install steps](https://docs.docker.com/engine/install/linux-postinstall/).
@@ -112,22 +73,3 @@ Run completed pipeline (includes introspection reports etc., multi-sample and mu
 ```bash
 nextflow run .main.nf --reads data/samplesheet_full.csv
 ```
-
-## mkdocs  
-
-To generate html docs during development (before deploying):
-
-```bash
-cd ~/hello-nextflow/
-mkdocs serve
-# open http://127.0.0.1:8000/ in browser
-```
-
-To render docs for website (manually):  
-
-```bash
-mkdocs gh-deploy
-```
-
-Open [https://sydney-informatics-hub.github.io/hello-nextflow/](https://sydney-informatics-hub.github.io/hello-nextflow/) in a browser.  
-

@@ -1,13 +1,6 @@
-# Nextflow for the Life Sciences 2025
-
-Training materials for SIH's implementation of Seqera's Hello Nextflow workshop 2025.
+# NF4LS: Data and environment setup
 
 This repo is a [mirror](https://docs.github.com/en/repositories/creating-and-managing-repositories/duplicating-a-repository#mirroring-a-repository)
-of the [Hello Nextflow workshop delivered in 2024](https://github.com/Sydney-Informatics-Hub/hello-nextflow) for archiving and minting separating DOIs.
+of the [Nextflow for the Life Sciences](https://github.com/Sydney-Informatics-Hub/hello-nextflow-2025) workshop.
 
-- [Event description](https://www.biocommons.org.au/events/nextflow-life-sciences)
-- [Published materials](https://sydney-informatics-hub.github.io/hello-nextflow-2025/)
-
-## Developers 
-
-See [set up instructions](./dev_setup/README.md)
+This repo is used to setup a new environment with the dependencies, data, and file structure required to run the workshop.
