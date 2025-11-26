@@ -61,15 +61,23 @@ IMAGES=(
 	"quay.io/biocontainers/multiqc:1.19--pyhdfd78af_0"
 )
 
-export SINGULARITY_CACHEDIR=${HOME}/${USER}/singularity
+export SINGULARITY_CACHEDIR=${HOME}/singularity
 
+# In the original workshop, we used docker and docker images.
+# We have since replaced docker with singularity
+# For reproducibility, pull the docker images with singularity
+# by adding "docker://" 
 for image in "${IMAGES[@]}"; do
-    singularity pull "$image"
+	if [[ ! -f "${SINGULARITY_CACHEDIR}/${image}" ]]; then
+    	singularity pull "docker://${image}"
+	else
+		log "Skipping ${image} (already exists)"
+	fi
 done
 
 log "Validating singularity containers"
 for image in "${IMAGES[@]}"; do
-    if ! singularity run "$image"; then
+    if ! singularity inspect "${SINGULARITY_CACHEDIR}/${image}"; then
        	log "ERROR: Failed to run $image"
     	exit 1
     fi
