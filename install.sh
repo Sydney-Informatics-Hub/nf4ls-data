@@ -41,7 +41,7 @@ for util in "${SYSUTILS[@]}"; do
 done
 check_executable tr
 
-log "Installing open-jdj-${VERSION}-jre..."
+log "Installing open-jdk-${JAVA_VERSION}-jre..."
 sudo apt install -y "openjdk-${JAVA_VERSION}-jre"
 
 log "Verifying java install..."
@@ -65,7 +65,7 @@ sudo apt install -y singularity-container=${SINGULARITY_VERSION}
 # fix version, do not upgrad
 sudo apt-mark hold singularity-container
 
-log "Verifying singularity: $(singularity --version) | grep ${SINGULARITY_VERSION}"
+log "Verifying singularity: $(singularity --version | grep ${SINGULARITY_VERSION})"
 
 log "Pulling biocontainers"
 # When pulling containers outside of Nextflow, the default name doesn't match
