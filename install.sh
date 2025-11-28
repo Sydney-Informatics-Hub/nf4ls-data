@@ -1,6 +1,7 @@
 #!/bin/bash -eu
 
 source lib/prep_files.sh
+source lib/utils.sh
 
 # Set timezone (for logging)  
 TZ=$(timedatectl show --property=Timezone --value)
@@ -99,11 +100,6 @@ for image in "${IMAGES[@]}"; do
 	fi
 done
 
-if [[ ! -d "${HOME}/part1" && ! -d "${HOME}/part2 ]]; then
-	log "Preparing folder structure and files for the workshop..."
-	prep_file("${HOME}")
-else
-	log "Files already exist"
-fi
+prep_files()
 
 log "Installation for $USER successful!"
