@@ -25,9 +25,16 @@ As there are no intensive data-processing steps, 2GB 4CPU is sufficient for one 
 Each learner should have their own machine or user account.
 
 ```bash
+cd $HOME && \
 git clone nf4ls-data && \
 cd nf4ls-data && \
-./install.sh
+./install.sh 
+
+source ~/.bashrc
+
+# Once everything is setup correctly, delete the repo 
+
+rm -rfv "${HOME}/nf4ls-data"
 ```
 
 This will:
@@ -35,6 +42,7 @@ This will:
 1. Install required dependencies (Nextflow, singularity)
 2. Pre-pull containers
 3. Prepare file structure and all required input files for the workshop
+4. Test run the workshop and that all dependencies are installed correctly
 
 ### File structure
 

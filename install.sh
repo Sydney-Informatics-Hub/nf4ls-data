@@ -2,27 +2,7 @@
 
 source lib/prep_files.sh
 source lib/utils.sh
-
-# Set timezone (for logging)  
-TZ=$(timedatectl show --property=Timezone --value)
-if [ "$TZ" != "Australia/Sydney" ]; then
-    echo "Setting timezone to Australia/Sydney"
-    sudo timedatectl set-timezone Australia/Sydney
-fi
-
-# Define logger
-log() {
-	TIMESTAMP=$(date +%y-%m-%d\ %H:%M:%S)
-    echo "[${TIMESTAMP}] $@"
-}
-
-# Check executable
-check_executable() {
-    if [ ! -x "$(command -v $1)" ]; then
-        log "ERROR: $1 not executable"
-        exit 1
-    fi
-}
+source lib/validate_workshop.sh
 
 JAVA_VERSION="21"
 NXF_VERSION="24.10.0"
@@ -50,7 +30,7 @@ check_executable "java -version"
 
 ## Nextflow
 log "Installing Nextflow v${NXF_VERSION}"
-curl -s "https://github.com/nextflow-io/nextflow/releases/download/v${NXF_VERSION}/nextflow" \
+curl -sL "https://github.com/nextflow-io/nextflow/releases/download/v${NXF_VERSION}/nextflow" \
 	-o nextflow
 chmod 755 ./nextflow
 
@@ -58,7 +38,7 @@ chmod 755 ./nextflow
 sudo mv ./nextflow /usr/local/bin
 
 log "Verifying nextflow install..."
-check_executable nextflow
+check_executable "nextflow --version"
 
 ## Singularity
 log "Installing singularity..."
@@ -79,12 +59,16 @@ IMAGES=(
 	"quay.io/biocontainers/multiqc:1.19--pyhdfd78af_0 quay.io-biocontainers-multiqc-1.19--pyhdfd78af_0.img"
 )
 
-if grep -q SINGULARITY_CACHEDIR; then
+# Export cachedir in .bashrc 
+if grep -q "SINGULARITY_CACHEDIR" ~/.bashrc; then
 	log "SINGULARITY_CACHEDIR already exported"
 else
 	log "Adding SINGULARITY_CACHEDIR to .bashrc"
 	echo "export SINGULARITY_CACHEDIR=${HOME}/singularity" >> ~/.bashrc
-	source ~/.bashrc
+fi
+	
+# source for installation
+SINGULARITY_CACHEDIR=${HOME}/singularity
 
 # In the original workshop, we used docker and docker images.
 # We have since replaced docker with singularity
@@ -100,6 +84,8 @@ for image in "${IMAGES[@]}"; do
 	fi
 done
 
-prep_files()
+# Copy workshop folders and files into the home dir by default
+prep_files "$HOME"
+run_part2 "$HOME"
 
 log "Installation for $USER successful!"
