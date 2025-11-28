@@ -5,7 +5,7 @@ of the [Nextflow for the Life Sciences](https://github.com/Sydney-Informatics-Hu
 
 This repo is used to setup a new environment with the dependencies, data, and file structure required to run the workshop.
 
-## Minimum requirements
+## Machine requirements
 
 Install instructions are suitable for systems that meet the following:
 
@@ -13,6 +13,12 @@ Install instructions are suitable for systems that meet the following:
 - 2GB 4CPU
 
 As there are no intensive data-processing steps, 2GB 4CPU is sufficient for one user
+
+## Software dependencies
+
+- Java v21
+- Nextflow v24.10.0
+- Singularity (CE) v4.1.1
 
 ## Installation and setup
 

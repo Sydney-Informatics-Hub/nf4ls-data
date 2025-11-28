@@ -21,6 +21,10 @@ check_executable() {
     fi
 }
 
+JAVA_VERSION="21"
+NXF_VERSION="24.10.0"
+SINGULARITY_VERSION="4.1.1+ds2-1ubuntu0.3" # apt version
+
 ## apt
 log "Updating and upgrading packages..."
 sudo apt update -y && sudo apt upgrade -y
@@ -35,16 +39,19 @@ for util in "${SYSUTILS[@]}"; do
 done
 check_executable tr
 
-log "Installing default-jre"
-sudo apt install default-jre
+log "Installing open-jdj-${VERSION}-jre..."
+sudo apt install -y "openjdk-${JAVA_VERSION}-jre"
 
 log "Verifying java install..."
 check_executable "java -version"
 
 ## Nextflow
-log "Installing nextflow..."
-curl -s https://get.nextflow.io | bash
+log "Installing Nextflow v${NXF_VERSION}"
+curl -s "https://github.com/nextflow-io/nextflow/releases/download/v${NXF_VERSION}/nextflow" \
+	-o nextflow
 chmod 755 ./nextflow
+
+# Move to $PATH
 sudo mv ./nextflow /usr/local/bin
 
 log "Verifying nextflow install..."
@@ -52,39 +59,45 @@ check_executable nextflow
 
 ## Singularity
 log "Installing singularity..."
-sudo apt install -y singularity-container
+sudo apt install -y singularity-container=${SINGULARITY_VERSION}
+# fix version, do not upgrad
+sudo apt-mark hold singularity-container
+
+log "Verifying singularity: $(singularity --version) | grep ${SINGULARITY_VERSION}"
 
 log "Pulling biocontainers"
+# When pulling containers outside of Nextflow, the default name doesn't match
+# what Nextflow expects
+# [0]: Link to pull container
+# [1]: Amended name for nextflow to recognise
 IMAGES=(
-	"quay.io/biocontainers/salmon:1.10.1--h7e5ed60_0"
-	"quay.io/biocontainers/fastqc:0.12.1--hdfd78af_0"
-	"quay.io/biocontainers/multiqc:1.19--pyhdfd78af_0"
+	"quay.io/biocontainers/salmon:1.10.1--h7e5ed60_0 quay.io-biocontainers-salmon-1.10.1--h7e5ed60_0.img"
+	"quay.io/biocontainers/fastqc:0.12.1--hdfd78af_0 quay.io-biocontainers-fastqc-0.12.1--hdfd78af_0.img"
+	"quay.io/biocontainers/multiqc:1.19--pyhdfd78af_0 quay.io-biocontainers-multiqc-1.19--pyhdfd78af_0.img"
 )
 
-IMAGES_CORRECT_NAME=(
-	"quay.io-biocontainers-salmon-1.10.1--h7e5ed60_0.img"
-	"quay.io-biocontainers-fastqc-0.12.1--hdfd78af_0.img"
-	"quay.io-biocontainers-multiqc-1.19--pyhdfd78af_0.img"
-)
-
-export SINGULARITY_CACHEDIR=${HOME}/singularity
+if grep -q SINGULARITY_CACHEDIR; then
+	log "SINGULARITY_CACHEDIR already exported"
+else
+	log "Adding SINGULARITY_CACHEDIR to .bashrc"
+	echo "export SINGULARITY_CACHEDIR=${HOME}/singularity" >> ~/.bashrc
+	source ~/.bashrc
 
 # In the original workshop, we used docker and docker images.
 # We have since replaced docker with singularity
 # For reproducibility, pull the docker images with singularity
 # by adding "docker://" 
 for image in "${IMAGES[@]}"; do
-	for name in "${IMAGES_CORRECT_NAME[@]}"; do
-		if [[ ! -f "${SINGULARITY_CACHEDIR}/${name}" ]]; then
-    		singularity pull "${SINGULARITY_CACHEDIR}/${name}" "docker://${image}"
-		else
-			log "Skipping ${image} (already exists)"
-		fi
-	done
+	# unpack string by " "
+	read -r url img <<< $image
+	if [[ ! -f "${SINGULARITY_CACHEDIR}/${img}" ]]; then
+		singularity pull "${SINGULARITY_CACHEDIR}/${img}" "docker://${url}"
+	else
+		log "Skipping ${img} (already exists)"
+	fi
 done
 
 # Have an empty part1 directory at the start of the workshop
 mkdir -p ${HOME}/part1
 
 log "Installation for $USER successful!"
-   
