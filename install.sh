@@ -1,4 +1,6 @@
-#!/usr/bin/bash -eu
+#!/bin/bash -eu
+
+source lib/prep_files.sh
 
 # Set timezone (for logging)  
 TZ=$(timedatectl show --property=Timezone --value)
@@ -97,7 +99,11 @@ for image in "${IMAGES[@]}"; do
 	fi
 done
 
-# Have an empty part1 directory at the start of the workshop
-mkdir -p ${HOME}/part1
+if [[ ! -d "${HOME}/part1" && ! -d "${HOME}/part2 ]]; then
+	log "Preparing folder structure and files for the workshop..."
+	prep_file("${HOME}")
+else
+	log "Files already exist"
+fi
 
 log "Installation for $USER successful!"
