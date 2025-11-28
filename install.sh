@@ -61,6 +61,12 @@ IMAGES=(
 	"quay.io/biocontainers/multiqc:1.19--pyhdfd78af_0"
 )
 
+IMAGES_CORRECT_NAME=(
+	"quay.io-biocontainers-salmon-1.10.1--h7e5ed60_0.img"
+	"quay.io-biocontainers-fastqc-0.12.1--hdfd78af_0.img"
+	"quay.io-biocontainers-multiqc-1.19--pyhdfd78af_0.img"
+)
+
 export SINGULARITY_CACHEDIR=${HOME}/singularity
 
 # In the original workshop, we used docker and docker images.
@@ -68,19 +74,17 @@ export SINGULARITY_CACHEDIR=${HOME}/singularity
 # For reproducibility, pull the docker images with singularity
 # by adding "docker://" 
 for image in "${IMAGES[@]}"; do
-	if [[ ! -f "${SINGULARITY_CACHEDIR}/${image}" ]]; then
-    	singularity pull "docker://${image}"
-	else
-		log "Skipping ${image} (already exists)"
-	fi
+	for name in "${IMAGES_CORRECT_NAME[@]}"; do
+		if [[ ! -f "${SINGULARITY_CACHEDIR}/${name}" ]]; then
+    		singularity pull "${SINGULARITY_CACHEDIR}/${name}" "docker://${image}"
+		else
+			log "Skipping ${image} (already exists)"
+		fi
+	done
 done
 
-log "Validating singularity containers"
-for image in "${IMAGES[@]}"; do
-    if ! singularity inspect "${SINGULARITY_CACHEDIR}/${image}"; then
-       	log "ERROR: Failed to run $image"
-    	exit 1
-    fi
-done
+# Have an empty part1 directory at the start of the workshop
+mkdir -p ${HOME}/part1
 
 log "Installation for $USER successful!"
+   

@@ -58,9 +58,9 @@ ${HOME}/
 │   ├── .main.nf
 │   └── .nextflow.config
 └── singularity
-    ├── fastqc 
-    ├── salmon
-    └── multiqc
+    ├── quay.io-biocontainers-fastqc-0.12.1--hdfd78af_0.img
+    ├── quay.io-biocontainers-multiqc-1.19--pyhdfd78af_0.img
+    └── quay.io-biocontainers-salmon-1.10.1--h7e5ed60_0.img
 ```
 
 part1 is empty as learners will create scripts from scratch.
