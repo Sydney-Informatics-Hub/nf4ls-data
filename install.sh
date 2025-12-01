@@ -69,6 +69,7 @@ fi
 	
 # source for installation
 SINGULARITY_CACHEDIR=${HOME}/singularity
+mkdir -p ${SINGULARITY_CACHEDIR}
 
 # In the original workshop, we used docker and docker images.
 # We have since replaced docker with singularity
